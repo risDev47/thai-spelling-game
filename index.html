@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เกมมาตราตัวสะกด 🍦</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- หน้าเริ่มเกม -->
+  <section id="startScreen" class="screen">
+    <div class="panel">
+      <h1>เกมมาตราตัวสะกด 🍦</h1>
+      <label>ชื่อร้านไอศกรีม</label>
+      <input id="storeNameInput" type="text" placeholder="เช่น ร้านไอติมแมว" />
+      <button id="startBtn" class="fancy-btn">เริ่มเกม</button>
+      <p class="hint">ระบบจะเริ่มจับเวลาเมื่อกด “เริ่มเกม”</p>
+    </div>
+  </section>
+
+  <!-- หน้าเกม -->
+  <section id="gameScreen" class="screen hidden">
+    <header class="topbar">
+      <div class="brand"><span id="storeName">ร้านไอติม</span></div>
+      <div class="status">
+        <span>เวลา: <strong id="timer">00:00</strong></span>
+        <span>ก้อน: <strong id="progress">0/10</strong></span>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="left">
+        <div id="sentenceBox" class="sentence">โหลดโจทย์…</div>
+        <div id="choices" class="choices"></div>
+      </div>
+      <div class="right">
+        <div id="iceCream" class="ice-area">
+          <div class="cone"></div>
+        </div>
+      </div>
+    </main>
+
+    <button id="toggleMusic" class="music-btn">🎵 เปิด/ปิดเพลง</button>
+  </section>
+
+  <!-- หน้าสรุปผล -->
+  <section id="resultScreen" class="screen hidden">
+    <div class="panel">
+      <h2>ชนะแล้ว! 🎉</h2>
+      <p id="resultText"></p>
+      <button id="restartBtn" class="fancy-btn">เล่นใหม่</button>
+    </div>
+  </section>
+
+  <!-- เพลงพื้นหลัง -->
+  <audio id="bgMusic" loop>
+    <source src="ice-cream-music.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+<script src="script.js"></script>
+</body>
+</html>
