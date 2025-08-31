@@ -47,7 +47,7 @@ const questions = [
 { before: "พ่อ", word: "จับ", after: "ปลาในบ่อมาทำกับข้าว", cat: "แม่กบ" },
 
 { before: "สร้อยของเเม่", word: "จม", after: "น้ำหายไปเมื่อตอนเย็น", cat: "แม่กม" },
-{ before: "ฉันชอบดู", word: "มด", after: "เพราะมันขยัน", cat: "แม่กม" },
+{ before: "ฉันชอบเล่นว่าวตอน", word: "ลม", after: "เเรง", cat: "แม่กม" },
 { before: "ยายของฉันชอบทาน", word: "ส้ม", after: "เขียวหวาน", cat: "แม่กม" },
 { before: "เเมวน้อยมี", word: "ขน", after: "นุ่มเเละน่ารักมาก", cat: "แม่กม" },
 { before: "ต้นกล้าไปเล่นกีฬา", word: "จน", after: "มืดค่ำ", cat: "แม่กม" } ,
@@ -81,118 +81,122 @@ function fmtTime(sec) { const m=Math.floor(sec/60), s=sec%60; return `${String(m
 
 // เริ่ม/รีเซ็ตเกม
 function resetGame(){
-  scoops=0;
-  running=false;
-  startMs=0;
-  progressEl.textContent = `${scoops}/${MAX_SCOOPS}`;
-  timerEl.textContent="00:00";
-  drawScoops();
+  scoops=0;
+  running=false;
+  startMs=0;
+  progressEl.textContent = `${scoops}/${MAX_SCOOPS}`;
+  timerEl.textContent="00:00";
+  drawScoops();
 }
 
 function startGame(){
-  storeName = storeNameInput.value.trim() || "ร้านไอศกรีม";
-  document.getElementById("storeName").textContent = storeName;
-  startScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
-  resetGame();
-  nextQuestion();
-  startMs = Date.now();
-  running = true;
-  timerHandle = setInterval(()=>{ if(running) timerEl.textContent=fmtTime(nowSec()); }, 500);
-
-  bgMusic.volume = 0.3;
-  const playPromise = bgMusic.play();
-  if(playPromise !== undefined){ playPromise.catch(err => console.log("เพลงไม่สามารถเล่นได้:", err)); }
+  storeName = storeNameInput.value.trim() || "ร้านไอศกรีม";
+  document.getElementById("storeName").textContent = storeName;
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  resetGame();
+  nextQuestion();
+  startMs = Date.now();
+  running = true;
+  timerHandle = setInterval(()=>{ if(running) timerEl.textContent=fmtTime(nowSec()); }, 500);
 }
 
 function endGame(){
-  running=false;
-  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
-  const used=nowSec();
-  gameScreen.classList.add("hidden");
-  resultScreen.classList.remove("hidden");
-  resultText.textContent = `${storeName} ใช้เวลา ${fmtTime(used)} สะสมไอศกรีมครบ ${MAX_SCOOPS} ก้อน!`;
+  running=false;
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  const used=nowSec();
+  gameScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+  resultText.textContent = `${storeName} ใช้เวลา ${fmtTime(used)} สะสมไอศกรีมครบ ${MAX_SCOOPS} ก้อน!`;
 }
 
 // คำถาม
 function renderSentence(q){
-  sentenceBox.innerHTML = `${q.before} <span class="underline">${q.word}</span> ${q.after}`;
+  sentenceBox.innerHTML = `${q.before} <span class="underline">${q.word}</span> ${q.after}`;
 }
 
 function renderChoices(correctCat){
-  choicesBox.innerHTML="";
-  const shuffled = [...categories].sort(()=>Math.random()-0.5);
-  shuffled.forEach(cat=>{
-    const btn=document.createElement("button");
-    btn.textContent=cat;
-    btn.addEventListener("click",()=>onChoose(cat, correctCat, btn));
-    choicesBox.appendChild(btn);
-  });
+  choicesBox.innerHTML="";
+  const shuffled = [...categories].sort(()=>Math.random()-0.5);
+  shuffled.forEach(cat=>{
+    const btn=document.createElement("button");
+    btn.textContent=cat;
+    btn.addEventListener("click",()=>onChoose(cat, correctCat, btn));
+    choicesBox.appendChild(btn);
+  });
 }
 
 function nextQuestion(){
-  const q = randChoice(questions);
-  renderSentence(q);
-  renderChoices(q.cat);
+  const q = randChoice(questions);
+  renderSentence(q);
+  renderChoices(q.cat);
 }
 
 function onChoose(cat, correctCat, btn){
-  if(!running) return;
-  if(cat===correctCat){
-    scoops++;
-    progressEl.textContent = `${scoops}/${MAX_SCOOPS}`;
-    drawScoops(true);
-    playClap();
-    if(scoops>=MAX_SCOOPS) endGame();
-    else nextQuestion();
-  } else {
-    // ❌ ไม่ลด scoops แต่ทำให้ปุ่ม "สั่น + emoji"
-    btn.style.animation = "shake 0.3s";
-    btn.textContent += " 😖";
-    setTimeout(()=>{
-      btn.style.animation = "";
-      btn.textContent = btn.textContent.replace(" 😖","");
-    }, 600);
-  }
+  if(!running) return;
+  if(cat===correctCat){
+    scoops++;
+    progressEl.textContent = `${scoops}/${MAX_SCOOPS}`;
+    drawScoops(true);
+    playClap();
+    if(scoops>=MAX_SCOOPS) endGame();
+    else nextQuestion();
+  } else {
+    // ❌ ไม่ลด scoops แต่ทำให้ปุ่ม "สั่น + emoji"
+    btn.style.animation = "shake 0.3s";
+    btn.textContent += " 😖";
+    setTimeout(()=>{
+      btn.style.animation = "";
+      btn.textContent = btn.textContent.replace(" 😖","");
+    }, 600);
+  }
 }
 
 // วาดไอศกรีม
 function drawScoops(pop=false){
-  scoopsBox.querySelectorAll(".scoop").forEach(el=>el.remove());
-  for(let i=0;i<scoops;i++){
-    const s=document.createElement("div");
-    s.className=`scoop c${(i%7)+1}`;
-    s.style.bottom=`${280 + i*28}px`;
-    if(pop){
-      s.style.animation="bounce 0.6s ease";
-    }
-    scoopsBox.appendChild(s);
-  }
+  scoopsBox.querySelectorAll(".scoop").forEach(el=>el.remove());
+  for(let i=0;i<scoops;i++){
+    const s=document.createElement("div");
+    s.className=`scoop c${(i%7)+1}`;
+    s.style.bottom=`${280 + i*28}px`;
+    if(pop){
+      s.style.animation="bounce 0.6s ease";
+    }
+    scoopsBox.appendChild(s);
+  }
 }
 
 // เสียงปรบมือ
 function playClap(){
-  const audio=new Audio("https://www.soundjay.com/human/sounds/applause-01.mp3");
-  audio.volume=0.5;
-  audio.play();
+  const audio=new Audio("https://www.soundjay.com/human/sounds/applause-01.mp3");
+  audio.volume=0.5;
+  audio.play();
 }
 
 // Event
 startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", ()=>{
-  resultScreen.classList.add("hidden");
-  startScreen.classList.remove("hidden");
+  resultScreen.classList.add("hidden");
+  startScreen.classList.remove("hidden");
 });
 
 // ปุ่มเปิด/ปิดเพลง
 toggleBtn.addEventListener("click", ()=>{
-  if(bgMusic.paused) bgMusic.play();
-  else bgMusic.pause();
+  if(bgMusic.paused) bgMusic.play();
+  else bgMusic.pause();
 });
 
-// CSS Animation shake (เพิ่มใน style.css ด้วย)
-// @keyframes shake {
-//   0%,100% { transform: translateX(0); }
-//   20%,60% { transform: translateX(-6px); }
-//   40%,80% { transform: translateX(6px); }
-// }
+// เพิ่มส่วนนี้เพื่อจัดการการเล่นเพลง
+document.addEventListener("click", () => {
+  bgMusic.volume = 0.3;
+  const playPromise = bgMusic.play();
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      // สามารถเล่นเพลงได้
+      console.log("เพลงเริ่มเล่นแล้ว");
+    }).catch(error => {
+      // ไม่สามารถเล่นเพลงได้
+      console.log("ไม่สามารถเล่นเพลงอัตโนมัติได้ ต้องให้ผู้ใช้คลิกปุ่ม 'เริ่มเกม' แทน");
+    });
+  }
+}, { once: true });
